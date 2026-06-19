@@ -1,0 +1,410 @@
+---
+---
+
+<section id="predictor" class="relative py-28 px-6">
+
+  <!-- Accent glow -->
+  <div class="absolute right-0 top-1/2 -translate-y-1/2 w-96 h-96 opacity-10 pointer-events-none"
+    style="background: radial-gradient(circle, #a78bfa 0%, transparent 70%)">
+  </div>
+
+  <div class="max-w-4xl mx-auto">
+
+    <!-- Header -->
+    <div class="mb-12 text-center">
+      <p class="text-[#00ff41]/40 text-xs tracking-[0.3em] uppercase mb-3">// PREDICTOR</p>
+      <h2 class="text-3xl md:text-4xl font-bold text-white">
+        Ejecutar <span class="text-matrix">Modelo</span>
+      </h2>
+      <p class="text-white/40 mt-3 text-sm">
+        Ingresa kilómetros, la red neuronal predice millas.
+        <span class="text-[#00ff41]/60">Powered by TensorFlow + FastAPI</span> | Alumna: Marilu Mendoza Ramírez
+      </p>
+    </div>
+
+    <!-- Main predictor card -->
+    <div class="glass-dark border border-[#00ff41]/20 overflow-hidden glow-box">
+
+      <!-- Terminal bar -->
+      <div class="flex items-center justify-between px-5 py-3 border-b border-[#00ff41]/10 bg-[#00ff41]/5">
+        <div class="flex items-center gap-2">
+          <span class="w-2.5 h-2.5 rounded-full bg-red-500/70"></span>
+          <span class="w-2.5 h-2.5 rounded-full bg-yellow-500/70"></span>
+          <span class="w-2.5 h-2.5 rounded-full bg-[#00ff41]/70"></span>
+        </div>
+        <span class="text-[#00ff41]/40 text-xs tracking-widest">POST /predict</span>
+        <div class="flex items-center gap-2">
+          <span id="status-dot" class="w-2 h-2 rounded-full bg-yellow-400 animate-pulse"></span>
+          <span id="status-label" class="text-[10px] text-white/30 tracking-widest">CHECANDO API...</span>
+        </div>
+      </div>
+
+      <div class="p-6 md:p-8 grid md:grid-cols-2 gap-8">
+
+        <!-- Input col -->
+        <div>
+          <div class="flex items-center justify-between mb-3">
+            <label class="text-[#00ff41]/60 text-xs tracking-widest uppercase">
+              Array de kilómetros
+            </label>
+            <button id="clear-btn" class="text-[10px] px-2 py-1 border border-[#00ff41]/20 text-[#00ff41]/40 hover:border-[#00ff41]/60 hover:text-[#00ff41] transition-all tracking-widest">
+              🗑 Limpia
+            </button>
+          </div>
+
+          <!-- Quick presets -->
+          <div class="flex flex-wrap gap-2 mb-4">
+            {[[1,2,3,4,5], [6,7,8,9], [10,20,50,100], [0.5,1,2,5,10]].map((preset) => (
+              <button
+                class="preset-btn text-[10px] px-3 py-1 border border-[#00ff41]/20 text-[#00ff41]/40 hover:border-[#00ff41]/60 hover:text-[#00ff41] transition-all tracking-widest"
+                data-values={preset.join(',')}
+              >
+                [{preset.join(', ')}] km
+              </button>
+            ))}
+          </div>
+
+          <!-- Input tags -->
+          <div
+            id="km-input-area"
+            class="min-h-20 p-3 border border-[#00ff41]/20 bg-black/40 focus-within:border-[#00ff41]/60 transition-all duration-200 flex flex-wrap gap-2 cursor-text"
+          >
+            <input
+              id="km-text-input"
+              type="text"
+              inputmode="numeric"
+              placeholder="1, 5, 10 km → Enter"
+              class="bg-transparent text-[#00ff41] text-sm outline-none placeholder:text-white/20 min-w-32 flex-1"
+            />
+          </div>
+          <p class="text-white/20 text-[10px] mt-2">Solo números con 1 decimal (ej: 10.5)</p>
+
+          <!-- Predict button -->
+        <button
+        id="predict-btn"
+        class="
+            mt-6 w-full relative overflow-hidden
+            py-3.5 px-6
+            bg-gradient-to-r from-[#00ff41]/10 via-[#00ff41]/20 to-[#00ffff]/10
+            border border-[#00ff41]/50
+            text-[#00ff41]
+            text-sm font-semibold
+            tracking-[0.25em]
+            uppercase
+            rounded-sm
+            transition-all duration-300
+            hover:border-[#00ff41]
+            hover:bg-[#00ff41]/20
+            hover:shadow-[0_0_25px_rgba(0,255,65,0.45)]
+            active:scale-[0.98]
+            disabled:opacity-50
+            disabled:cursor-not-allowed
+            group
+            flex items-center justify-center gap-3
+        "
+        >
+        <!-- animated glow -->
+        <span
+            class="
+            absolute inset-0
+            bg-gradient-to-r
+            from-transparent
+            via-[#00ff41]/20
+            to-transparent
+            translate-x-[-100%]
+            group-hover:translate-x-[100%]
+            transition-transform
+            duration-700
+            "
+        ></span>
+
+        <!-- content -->
+        <span
+  id="btn-icon"
+  class="
+    relative
+    w-4 h-4
+    border border-[#00ff41]/60
+    rounded-full
+    transition-all duration-300
+    group-hover:shadow-[0_0_10px_#00ff41]
+  "
+></span>
+
+        <span id="btn-label" class="relative">
+            Predecir Millas
+        </span>
+
+        </button>
+        </div>
+
+        <!-- Output col -->
+        <div>
+          <label class="block text-[#00ff41]/60 text-xs tracking-widest uppercase mb-3">
+            Resultado — Millas
+          </label>
+
+          <!-- Output terminal -->
+          <div class="min-h-48 p-4 border border-[#00ff41]/10 bg-black/60 font-mono text-sm" id="output-area">
+            <p class="text-white/20 text-xs">// esperando input...</p>
+          </div>
+
+          <!-- Stats row -->
+          <div class="mt-4 grid grid-cols-3 gap-3" id="stats-row">
+            {[
+              { label: 'Entradas', id: 'stat-inputs', value: '—' },
+              { label: 'Modelo', id: 'stat-model', value: '.keras' },
+              { label: 'Status', id: 'stat-status', value: 'Sin conexión' },
+            ].map(stat => (
+              <div class="glass-dark border border-[#00ff41]/10 p-3 text-center">
+                <p class="text-[#00ff41] font-bold text-base" id={stat.id}>{stat.value}</p>
+                <p class="text-white/30 text-[10px] tracking-widest">{stat.label}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<script>
+  // ─── Global State ───────────────────────────────────────────────────────────
+  const API_URL = 'http://localhost:8000/predict';
+  const API_HEALTH_KEY = 'api_health_status';
+  
+  let apiOnline: boolean | null = null;
+  let kilometros: number[] = [];
+  let isProcessing: boolean = false;
+
+  // ─── Elements ──────────────────────────────────────────────────────────────
+  const inputArea = document.getElementById('km-input-area')!;
+  const textInput = document.getElementById('km-text-input') as HTMLInputElement;
+  const outputArea = document.getElementById('output-area')!;
+  const predictBtn = document.getElementById('predict-btn')!;
+  const clearBtn = document.getElementById('clear-btn')!;
+  const btnLabel = document.getElementById('btn-label')!;
+  const btnIcon = document.getElementById('btn-icon')!;
+  const statInputs = document.getElementById('stat-inputs')!;
+  const statStatus = document.getElementById('stat-status')!;
+  const statusDot = document.getElementById('status-dot')!;
+  const statusLabel = document.getElementById('status-label')!;
+
+  // ─── Load persisted state ─────────────────────────────────────────────────
+  const savedHealth = sessionStorage.getItem(API_HEALTH_KEY);
+  if (savedHealth) {
+    apiOnline = savedHealth === 'online';
+    updateApiStatus(apiOnline);
+  }
+
+  // ─── Check API health ──────────────────────────────────────────────────────
+  async function checkApiHealth(): Promise<void> {
+    if (apiOnline !== null) return;
+
+    statusLabel.textContent = 'CHECANDO API...';
+    statusDot.className = 'w-2 h-2 rounded-full bg-yellow-400 animate-pulse';
+
+    try {
+      const res = await fetch('http://localhost:8000/', {
+        method: 'GET',
+        signal: AbortSignal.timeout(3000),
+      });
+
+      if (res.ok) {
+        apiOnline = true;
+        sessionStorage.setItem(API_HEALTH_KEY, 'online');
+        updateApiStatus(true);
+      } else {
+        throw new Error(`HTTP ${res.status}`);
+      }
+    } catch {
+      apiOnline = false;
+      sessionStorage.setItem(API_HEALTH_KEY, 'offline');
+      updateApiStatus(false);
+    }
+  }
+
+  function updateApiStatus(online: boolean) {
+    if (online) {
+      statusDot.className = 'w-2 h-2 rounded-full bg-[#00ff41]';
+      statusLabel.textContent = 'API CONECTADA';
+      statusLabel.className = 'text-[10px] text-[#00ff41] tracking-widest';
+      statStatus.textContent = 'Online';
+      statStatus.className = 'text-[#00ff41] font-bold text-base';
+    } else {
+      statusDot.className = 'w-2 h-2 rounded-full bg-red-500';
+      statusLabel.textContent = 'API OFFLINE';
+      statusLabel.className = 'text-[10px] text-red-400 tracking-widest';
+      statStatus.textContent = 'Offline';
+      statStatus.className = 'text-red-400 font-bold text-base';
+    }
+  }
+
+  // ─── Render tags ───────────────────────────────────────────────────────────
+  function renderTags() {
+    inputArea.querySelectorAll('.km-tag').forEach(t => t.remove());
+    kilometros.forEach((val, i) => {
+      const tag = document.createElement('span');
+      tag.className = 'km-tag inline-flex items-center gap-1 px-2 py-0.5 text-xs border border-[#00ff41]/40 text-[#00ff41] bg-[#00ff41]/5';
+      tag.innerHTML = `${val} km <button class="text-[#00ff41]/40 hover:text-red-400 ml-1" data-idx="${i}">×</button>`;
+      tag.querySelector('button')!.addEventListener('click', () => {
+        kilometros.splice(i, 1);
+        renderTags();
+        updateStats();
+      });
+      inputArea.insertBefore(tag, textInput);
+    });
+    updateStats();
+  }
+
+  // Solo acepta números con 1 decimal máximo
+  function addKm(raw: string) {
+    const vals = raw.split(',')
+      .map(s => s.trim())
+      .filter(s => /^[\d]+\.?\d*$/.test(s))  // Regex: solo números y 1 decimal
+      .map(s => parseFloat(s))
+      .filter(n => !isNaN(n) && n > 0)
+      .map(n => Math.round(n * 10) / 10);  // Redondea a 1 decimal
+    
+    kilometros.push(...vals);
+    renderTags();
+    textInput.value = '';
+  }
+
+  // Limpia todo el array
+  function clearAll() {
+    kilometros = [];
+    renderTags();
+    outputArea.innerHTML = '<p class="text-white/20 text-xs">// esperando input...</p>';
+    statStatus.textContent = 'Sin conexión';
+    statStatus.className = 'text-white/30 font-bold text-base';
+  }
+
+  // ─── Input events ──────────────────────────────────────────────────────────
+  textInput.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter' || e.key === ',') {
+      e.preventDefault();
+      if (textInput.value.trim()) addKm(textInput.value);
+    }
+    if (e.key === 'Backspace' && textInput.value === '' && kilometros.length > 0) {
+      kilometros.pop();
+      renderTags();
+    }
+  });
+
+  textInput.addEventListener('blur', () => {
+    if (textInput.value.trim()) addKm(textInput.value);
+  });
+
+  inputArea.addEventListener('click', () => textInput.focus());
+
+  document.querySelectorAll('.preset-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      kilometros = [];
+      addKm((btn as HTMLElement).dataset.values!);
+    });
+  });
+
+  clearBtn.addEventListener('click', clearAll);
+
+  function updateStats() {
+    statInputs.textContent = kilometros.length > 0 ? String(kilometros.length) : '—';
+  }
+
+  // ─── Output render ─────────────────────────────────────────────────────────
+  function renderOutput(inputs: number[], results: number[]) {
+    const lines = inputs.map((km, i) => {
+      const mi = results[i].toFixed(4);
+      return `  <span class="text-white/40">${String(i + 1).padStart(2, '0')}.</span> <span class="text-[#00ffff]">${km.toString().padEnd(8)} km</span> <span class="text-white/30">→</span> <span class="text-[#00ff41] font-bold">${mi} mi</span>`;
+    });
+
+    outputArea.innerHTML = `
+      <p class="text-[#00ff41]/40 text-xs mb-3">&gt; predict(kilometros=[${inputs.join(', ')}])</p>
+      ${lines.join('\n')}
+      <p class="text-white/20 text-xs mt-3 pt-3 border-t border-[#00ff41]/10">
+        ✓ TensorFlow conversion.keras | Alumna: Marilu Mendoza Ramírez — ${new Date().toLocaleTimeString()}
+      </p>`;
+    statStatus.textContent = 'API';
+    statStatus.className = 'text-[#00ff41] font-bold text-base';
+  }
+
+  function renderError(msg: string) {
+    outputArea.innerHTML = `<p class="text-red-400 text-xs">&gt; ERROR: ${msg}</p>`;
+    statStatus.textContent = 'Error';
+    statStatus.className = 'text-red-400 font-bold text-base';
+  }
+
+function setLoading(loading: boolean) {
+  isProcessing = loading;
+
+  btnLabel.textContent = loading 
+    ? 'Procesando...' 
+    : 'Predecir Millas';
+
+  if (loading) {
+    btnIcon.className = `
+      relative
+      w-4 h-4
+      rounded-full
+      border-2
+      border-[#00ff41]/20
+      border-t-[#00ff41]
+      animate-spin
+    `;
+  } else {
+    btnIcon.className = `
+      relative
+      w-4 h-4
+      rounded-full
+      border
+      border-[#00ff41]/60
+      transition-all
+      duration-300
+      group-hover:shadow-[0_0_10px_#00ff41]
+    `;
+  }
+
+  predictBtn.disabled = loading;
+}
+
+  // ─── Main predict ──────────────────────────────────────────────────────────
+  predictBtn.addEventListener('click', async () => {
+    if (kilometros.length === 0) {
+      textInput.focus();
+      return;
+    }
+
+    if (isProcessing) return;
+
+    if (apiOnline === null) {
+      await checkApiHealth();
+    }
+
+    setLoading(true);
+    outputArea.innerHTML = '<p class="text-[#00ff41]/40 text-xs animate-pulse">&gt; conectando con el modelo...</p>';
+
+    try {
+      const res = await fetch(API_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ kilometros: kilometros }),
+        signal: AbortSignal.timeout(3000),
+      });
+
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      const data = await res.json();
+      renderOutput(kilometros, data.millas);
+      updateApiStatus(true);
+
+    } catch (err) {
+      updateApiStatus(false);
+      renderError('API offline — verifica que el contenedor esté activo');
+    }
+
+    setLoading(false);
+  });
+
+  // ─── Initial health check ──────────────────────────────────────────────────
+  setTimeout(checkApiHealth, 500);
+</script>
