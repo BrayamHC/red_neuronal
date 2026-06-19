@@ -1,0 +1,183 @@
+---
+---
+
+<section id="entrenamiento" class="relative py-28 px-6">
+  <div class="max-w-5xl mx-auto">
+
+    <div class="mb-12 text-center">
+      <p class="text-[#00ff41]/40 text-xs tracking-[0.3em] uppercase mb-3">// ENTRENAMIENTO</p>
+      <h2 class="text-3xl md:text-4xl font-bold text-white">
+        Curva de <span class="text-matrix">Aprendizaje</span>
+      </h2>
+      <p class="text-white/40 mt-3 text-sm max-w-lg mx-auto">
+        La red empieza sin saber nada. Después de <span class="text-[#00ff41]">1000 épocas</span>,
+        el error cae hasta ser casi imperceptible.
+      </p>
+    </div>
+
+    <!-- Chart container -->
+    <div class="glass-dark border border-[#00ff41]/20 overflow-hidden glow-box">
+
+      <!-- Terminal bar -->
+      <div class="flex items-center justify-between px-5 py-3 border-b border-[#00ff41]/10 bg-[#00ff41]/5">
+        <div class="flex items-center gap-2">
+          <span class="w-2.5 h-2.5 rounded-full bg-red-500/70"></span>
+          <span class="w-2.5 h-2.5 rounded-full bg-yellow-500/70"></span>
+          <span class="w-2.5 h-2.5 rounded-full bg-[#00ff41]/70"></span>
+        </div>
+        <span class="text-[#00ff41]/40 text-xs tracking-widest">GET /loss — historial.history["loss"]</span>
+        <span id="chart-status" class="text-[10px] text-white/30 tracking-widest">CARGANDO...</span>
+      </div>
+
+      <!-- Canvas chart -->
+      <div class="p-6">
+        <canvas id="loss-chart" height="280" class="w-full"></canvas>
+      </div>
+
+      <!-- Stats bar -->
+      <div class="grid grid-cols-2 md:grid-cols-4 border-t border-[#00ff41]/10">
+        {[
+          { label: 'Épocas', id: 'stat-epochs', icon: '🔄' },
+          { label: 'Loss inicial', id: 'stat-loss-start', icon: '📉' },
+          { label: 'Loss final', id: 'stat-loss-end', icon: '✓' },
+          { label: 'Reducción', id: 'stat-reduction', icon: '⚡' },
+        ].map((s, i) => (
+          <div class={`p-4 text-center ${i < 3 ? 'border-r border-[#00ff41]/10' : ''}`}>
+            <p class="text-lg mb-1">{s.icon}</p>
+            <p class="text-[#00ff41] font-bold text-base" id={s.id}>—</p>
+            <p class="text-white/30 text-[10px] tracking-widest">{s.label}</p>
+          </div>
+        ))}
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+  const API_URL = 'http://localhost:8000/loss';
+
+  // Fallback: simular curva de pérdida con decay exponencial
+  function simulateLoss(epochs: number): number[] {
+    return Array.from({ length: epochs }, (_, i) =>
+      0.5 * Math.exp(-0.008 * i) + 0.0001 + Math.random() * 0.0005
+    );
+  }
+
+  async function fetchLoss(): Promise<{ epochs: number[]; loss: number[] }> {
+    try {
+      const res = await fetch(API_URL, { signal: AbortSignal.timeout(3000) });
+      if (!res.ok) throw new Error();
+      const data = await res.json();
+      document.getElementById('chart-status')!.textContent = 'API CONECTADA';
+      return data;
+    } catch {
+      document.getElementById('chart-status')!.textContent = 'SIMULACIÓN LOCAL';
+      const loss = simulateLoss(1000);
+      return { epochs: loss.map((_, i) => i + 1), loss };
+    }
+  }
+
+  function drawChart(canvas: HTMLCanvasElement, epochs: number[], loss: number[]) {
+    const ctx = canvas.getContext('2d')!;
+    const W = canvas.offsetWidth;
+    const H = canvas.offsetHeight;
+    canvas.width = W * devicePixelRatio;
+    canvas.height = H * devicePixelRatio;
+    ctx.scale(devicePixelRatio, devicePixelRatio);
+
+    const pad = { top: 20, right: 20, bottom: 40, left: 60 };
+    const cW = W - pad.left - pad.right;
+    const cH = H - pad.top - pad.bottom;
+
+    const maxLoss = Math.max(...loss);
+    const minLoss = Math.min(...loss);
+
+    const xScale = (i: number) => pad.left + (i / (epochs.length - 1)) * cW;
+    const yScale = (v: number) => pad.top + cH - ((v - minLoss) / (maxLoss - minLoss)) * cH;
+
+    // Background
+    ctx.fillStyle = '#0a0a0a';
+    ctx.fillRect(0, 0, W, H);
+
+    // Grid lines
+    ctx.strokeStyle = 'rgba(0,255,65,0.07)';
+    ctx.lineWidth = 1;
+    for (let i = 0; i <= 5; i++) {
+      const y = pad.top + (i / 5) * cH;
+      ctx.beginPath(); ctx.moveTo(pad.left, y); ctx.lineTo(pad.left + cW, y); ctx.stroke();
+    }
+    for (let i = 0; i <= 10; i++) {
+      const x = pad.left + (i / 10) * cW;
+      ctx.beginPath(); ctx.moveTo(x, pad.top); ctx.lineTo(x, pad.top + cH); ctx.stroke();
+    }
+
+    // Gradient fill under curve
+    const gradient = ctx.createLinearGradient(0, pad.top, 0, pad.top + cH);
+    gradient.addColorStop(0, 'rgba(0,255,65,0.18)');
+    gradient.addColorStop(1, 'rgba(0,255,65,0)');
+
+    ctx.beginPath();
+    ctx.moveTo(xScale(0), yScale(loss[0]));
+    loss.forEach((v, i) => ctx.lineTo(xScale(i), yScale(v)));
+    ctx.lineTo(xScale(loss.length - 1), pad.top + cH);
+    ctx.lineTo(xScale(0), pad.top + cH);
+    ctx.closePath();
+    ctx.fillStyle = gradient;
+    ctx.fill();
+
+    // Main line
+    ctx.beginPath();
+    ctx.strokeStyle = '#00ff41';
+    ctx.lineWidth = 2;
+    ctx.shadowColor = '#00ff41';
+    ctx.shadowBlur = 6;
+    loss.forEach((v, i) => {
+      i === 0 ? ctx.moveTo(xScale(i), yScale(v)) : ctx.lineTo(xScale(i), yScale(v));
+    });
+    ctx.stroke();
+    ctx.shadowBlur = 0;
+
+    // Axes labels
+    ctx.fillStyle = 'rgba(0,255,65,0.5)';
+    ctx.font = '11px Courier New';
+    ctx.textAlign = 'center';
+
+    // X axis labels
+    [0, 250, 500, 750, 1000].forEach(ep => {
+      const idx = Math.min(ep, epochs.length - 1);
+      ctx.fillText(String(ep), xScale(idx), H - 8);
+    });
+
+    // Y axis labels
+    ctx.textAlign = 'right';
+    for (let i = 0; i <= 4; i++) {
+      const v = maxLoss - (i / 4) * (maxLoss - minLoss);
+      ctx.fillText(v.toExponential(1), pad.left - 8, yScale(v) + 4);
+    }
+
+    // Axis label text
+    ctx.fillStyle = 'rgba(0,255,65,0.4)';
+    ctx.font = '10px Courier New';
+    ctx.textAlign = 'center';
+    ctx.fillText('Épocas (iteraciones de entrenamiento)', W / 2, H - 0);
+  }
+
+  async function init() {
+    const canvas = document.getElementById('loss-chart') as HTMLCanvasElement;
+    const { epochs, loss } = await fetchLoss();
+
+    drawChart(canvas, epochs, loss);
+
+    // Update stats
+    const reduction = (((loss[0] - loss[loss.length - 1]) / loss[0]) * 100).toFixed(1);
+    document.getElementById('stat-epochs')!.textContent = String(epochs.length);
+    document.getElementById('stat-loss-start')!.textContent = loss[0].toExponential(3);
+    document.getElementById('stat-loss-end')!.textContent = loss[loss.length - 1].toExponential(3);
+    document.getElementById('stat-reduction')!.textContent = `−${reduction}%`;
+
+    // Redraw on resize
+    window.addEventListener('resize', () => drawChart(canvas, epochs, loss));
+  }
+
+  init();
+</script>
