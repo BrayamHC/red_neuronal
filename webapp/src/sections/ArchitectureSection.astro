@@ -1,0 +1,384 @@
+---
+const layers = [
+  {
+    id: 'INPUT',
+    label: 'Capa de Entrada',
+    detail: 'Array de millas [1.0, 5.0, 10.0 ...]',
+    nodes: 4,
+    color: '#00ffff',
+  },
+  {
+    id: 'HIDDEN',
+    label: 'Capa Oculta',
+    detail: 'Dense(64) · ReLU · aprende el patrón ×1.609',
+    nodes: 6,
+    color: '#00ff41',
+  },
+  {
+    id: 'OUTPUT',
+    label: 'Capa de Salida',
+    detail: 'Array de KM [1.609, 8.047, 16.09 ...]',
+    nodes: 4,
+    color: '#a78bfa',
+  },
+];
+
+
+const flow = [
+  { 
+    label: 'Datos de entrenamiento',
+    desc: 'miles_train.npy / km_train.npy'
+  },
+  { 
+    label: 'Modelo TensorFlow',
+    desc: 'Sequential → Dense → Dense'
+  },
+  { 
+    label: 'Entrenamiento',
+    desc: '500 epochs · Adam · MSE Loss'
+  },
+  { 
+    label: 'model.keras guardado',
+    desc: 'Artefacto persistente'
+  },
+  { 
+    label: 'FastAPI /predict',
+    desc: 'POST { miles: [1,5,10] }'
+  },
+  { 
+    label: 'Resultado web',
+    desc: '{ km: [1.609,8.047,16.09] }'
+  },
+];
+---
+
+
+<section id="arquitectura" class="relative py-28 px-6 overflow-hidden">
+
+
+  <!-- Background -->
+  <div
+    class="
+      absolute
+      left-1/2
+      top-1/2
+      -translate-x-1/2
+      -translate-y-1/2
+      w-[600px]
+      h-[600px]
+      rounded-full
+      opacity-5
+    "
+    style="
+      background:
+      radial-gradient(circle,#00ff41 0%,transparent 70%)
+    "
+  ></div>
+
+
+
+  <div class="max-w-6xl mx-auto relative">
+
+
+    <!-- Header -->
+    <div class="mb-16 text-center">
+
+      <p class="text-[#00ff41]/40 text-xs tracking-[0.3em] uppercase mb-3">
+        // ARQUITECTURA
+      </p>
+
+
+      <h2 class="text-3xl md:text-4xl font-bold text-white">
+        Cómo piensa la
+        <span class="text-matrix">
+          Red
+        </span>
+      </h2>
+
+
+      <p class="text-white/40 mt-3 max-w-xl mx-auto text-sm">
+        La red no usa la fórmula
+        <code class="text-[#00ff41]">
+          km = mi × 1.609
+        </code>.
+        La descubre ajustando pesos internos mediante backpropagation.
+      </p>
+
+    </div>
+
+
+
+
+
+    <!-- Neural network -->
+    <div
+      class="
+        flex
+        flex-col
+        md:flex-row
+        items-center
+        justify-center
+        gap-0
+        mb-20
+      "
+    >
+
+
+      {layers.map((layer, i) => (
+
+        <>
+
+          <!-- Layer -->
+          <div class="flex flex-col items-center gap-4">
+
+
+            <!-- Nodes -->
+            <div class="flex md:flex-col gap-3">
+
+              {Array.from({ length: layer.nodes }).map((_, ni) => (
+
+                <div
+                  class="
+                    relative
+                    w-7
+                    h-7
+                    rounded-full
+                    border-2
+                    flex
+                    items-center
+                    justify-center
+                    animate-pulse
+                  "
+                  style={`
+                    border-color:${layer.color};
+                    box-shadow:
+                    0 0 12px ${layer.color}50;
+                    animation-delay:${ni * 120}ms;
+                  `}
+                >
+
+                  <span
+                    class="
+                      w-2
+                      h-2
+                      rounded-full
+                    "
+                    style={`
+                      background:${layer.color};
+                      box-shadow:
+                      0 0 10px ${layer.color};
+                    `}
+                  ></span>
+
+                </div>
+
+              ))}
+
+            </div>
+
+
+
+
+            <!-- Info card -->
+            <div
+              class="
+                glass-dark
+                border
+                p-4
+                w-44
+                text-center
+              "
+              style={`border-color:${layer.color}30`}
+            >
+
+              <p
+                class="text-[10px] tracking-widest uppercase mb-1"
+                style={`color:${layer.color}90`}
+              >
+                {layer.id}
+              </p>
+
+
+              <p class="text-white text-xs font-bold mb-1">
+                {layer.label}
+              </p>
+
+
+              <p class="text-white/30 text-[10px] leading-relaxed">
+                {layer.detail}
+              </p>
+
+            </div>
+
+
+          </div>
+
+
+
+
+
+          <!-- Connector -->
+          {i < layers.length - 1 && (
+
+            <div
+              class="
+                flex
+                items-center
+                justify-center
+                px-5
+                py-4
+              "
+            >
+
+              <div
+                class="
+                  w-16
+                  md:w-20
+                  h-px
+                  bg-gradient-to-r
+                  from-transparent
+                  via-[#00ff41]/40
+                  to-transparent
+                  relative
+                  overflow-hidden
+                "
+              >
+
+                <span
+                  class="
+                    absolute
+                    top-0
+                    left-0
+                    h-full
+                    w-6
+                    bg-[#00ff41]
+                    blur-sm
+                    animate-[translateX_1.5s_linear_infinite]
+                  "
+                ></span>
+
+              </div>
+
+            </div>
+
+          )}
+
+        </>
+
+      ))}
+
+
+    </div>
+
+
+
+
+
+    <!-- Pipeline -->
+    <div>
+
+
+      <p
+        class="
+          text-center
+          text-[#00ff41]/40
+          text-xs
+          tracking-[0.3em]
+          uppercase
+          mb-8
+        "
+      >
+        // PIPELINE COMPLETO
+      </p>
+
+
+
+
+      <div
+        class="
+          grid
+          grid-cols-2
+          md:grid-cols-3
+          lg:grid-cols-6
+          gap-3
+        "
+      >
+
+
+        {flow.map((step, i) => (
+
+          <div
+            class="
+              relative
+              glass-dark
+              border
+              border-[#00ff41]/10
+              hover:border-[#00ff41]/40
+              p-4
+              text-center
+              transition-all
+              duration-300
+              group
+            "
+          >
+
+
+            <!-- number -->
+            <div
+              class="
+                absolute
+                -top-2.5
+                left-1/2
+                -translate-x-1/2
+                text-[10px]
+                text-[#00ff41]/60
+                bg-[#0a0a0a]
+                px-2
+              "
+            >
+              {String(i + 1).padStart(2,'0')}
+            </div>
+
+
+
+            <!-- status dot -->
+            <div
+              class="
+                mx-auto
+                mb-3
+                w-3
+                h-3
+                rounded-full
+                bg-[#00ff41]
+                shadow-[0_0_12px_#00ff41]
+                animate-pulse
+              "
+            ></div>
+
+
+
+            <p class="text-white text-[11px] font-bold mb-1">
+              {step.label}
+            </p>
+
+
+            <p class="text-white/30 text-[10px]">
+              {step.desc}
+            </p>
+
+
+          </div>
+
+        ))}
+
+
+      </div>
+
+
+    </div>
+
+
+  </div>
+
+
+</section>
