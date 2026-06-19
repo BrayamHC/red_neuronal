@@ -1,0 +1,116 @@
+---
+const techs = [
+  {
+    name: 'Astro',
+    version: '6.x',
+    icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/astro/astro-original.svg',
+    role: 'Frontend',
+    color: '#FF5D01',
+  },
+  {
+    name: 'FastAPI',
+    version: '0.x',
+    icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/fastapi/fastapi-original.svg',
+    role: 'API',
+    color: '#009688',
+  },
+  {
+    name: 'TensorFlow',
+    version: '2.x',
+    icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/tensorflow/tensorflow-original.svg',
+    role: 'Deep Learning',
+    color: '#FF6F00',
+  },
+];
+---
+
+<footer class="relative border-t border-[#00ff41]/15 py-12 px-6 bg-black/40 backdrop-blur-md overflow-hidden">
+
+  <!-- NEURAL GRID BACKGROUND -->
+  <div class="absolute inset-0 opacity-10 pointer-events-none">
+    <div class="w-full h-full bg-[radial-gradient(circle_at_center,_#00ff41_1px,transparent_1px)] bg-[length:22px_22px] animate-pulse"></div>
+  </div>
+
+  <!-- DATA FLOW LINES -->
+  <div class="absolute inset-0 pointer-events-none opacity-20">
+    <div class="absolute w-full h-[1px] top-1/2 bg-gradient-to-r from-transparent via-[#00ff41]/40 to-transparent animate-[pulse_3s_ease-in-out_infinite]"></div>
+  </div>
+
+  <div class="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-10 relative z-10">
+
+    <!-- IDENTIDAD -->
+    <div class="flex items-center gap-4">
+
+      <div class="relative w-10 h-10 border border-[#00ff41]/40 bg-black/60 flex items-center justify-center overflow-hidden">
+        <div class="absolute inset-0 animate-pulse bg-[#00ff41]/5"></div>
+        <span class="text-[#00ff41] text-[10px] font-bold tracking-widest">NN</span>
+      </div>
+
+      <div class="flex flex-col leading-none">
+        <span class="text-white/40 text-[11px] tracking-[0.35em]">
+          RED NEURONAL
+        </span>
+        <span class="text-[#00ff41]/40 text-[9px] tracking-[0.45em]">
+          CORE SYSTEM v1.0
+        </span>
+      </div>
+
+    </div>
+
+    <!-- TECH STACK (ICONOS REALES) -->
+    <div class="flex items-center gap-10">
+
+      {techs.map((tech, i) => (
+        <div class="relative group flex flex-col items-center gap-2">
+
+          <!-- glow ring -->
+          <div
+            class="absolute w-10 h-10 rounded-full blur-md opacity-30 group-hover:opacity-70 transition"
+            style={`background:${tech.color}`}
+          ></div>
+
+          <!-- icon -->
+          <div class="relative w-9 h-9 flex items-center justify-center">
+            <img
+              src={tech.icon}
+              alt={tech.name}
+              class="w-7 h-7 grayscale group-hover:grayscale-0 transition duration-300"
+            />
+          </div>
+
+          <!-- label -->
+          <span class="text-[9px] tracking-[0.3em] text-white/30 group-hover:text-white/70 transition">
+            {tech.name}
+          </span>
+
+          <!-- version -->
+          <span class="text-[8px] text-white/20">
+            v{tech.version}
+          </span>
+
+          <!-- data pulse -->
+          <span
+            class="absolute -bottom-1 w-1.5 h-1.5 rounded-full animate-ping"
+            style={`background:${tech.color}`}
+          ></span>
+
+        </div>
+      ))}
+
+    </div>
+
+    <!-- STATUS -->
+    <div class="flex items-center gap-3 text-[#00ff41]/40 text-[10px] tracking-[0.35em]">
+
+      <span class="relative flex h-2 w-2">
+        <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#00ff41]/30"></span>
+        <span class="relative inline-flex rounded-full h-2 w-2 bg-[#00ff41]/70"></span>
+      </span>
+
+      <span>SISTEMA ACTIVO</span>
+
+    </div>
+
+  </div>
+
+</footer>
