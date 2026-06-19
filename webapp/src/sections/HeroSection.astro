@@ -1,0 +1,83 @@
+---
+---
+
+<section id="inicio" class="relative min-h-screen flex items-center justify-center pt-20 overflow-hidden">
+
+  <!-- Grid background -->
+  <div class="absolute inset-0 opacity-10"
+    style="background-image: linear-gradient(rgba(0,255,65,0.3) 1px, transparent 1px), linear-gradient(90deg, rgba(0,255,65,0.3) 1px, transparent 1px); background-size: 40px 40px;">
+  </div>
+
+  <div class="max-w-5xl mx-auto px-6 text-center">
+
+    <!-- Terminal tag -->
+    <div class="inline-flex items-center gap-2 glass-dark border border-[#00ff41]/30 px-4 py-2 mb-8 animate-fade-up">
+      <span class="w-2 h-2 rounded-full bg-[#00ff41] animate-pulse"></span>
+      <span class="text-[#00ff41]/70 text-xs tracking-widest uppercase">Sistema activo — TensorFlow v2 | Python 3.12</span>
+    </div>
+
+    <!-- Headline -->
+    <h1 class="text-4xl md:text-6xl lg:text-7xl font-bold mb-6 leading-tight animate-fade-up delay-100">
+      <span class="text-white">Red</span>
+      <span class="text-matrix"> Neuronal</span>
+      <br />
+      <span class="text-white/60 text-3xl md:text-4xl lg:text-5xl font-light">
+        Millas
+        <span class="text-[#00ffff] text-matrix" style="color:#00ffff; text-shadow: 0 0 10px #00ffff">→</span>
+        Kilómetros
+      </span>
+    </h1>
+
+    <!-- Subheadline -->
+    <p class="text-white/50 text-base md:text-lg max-w-2xl mx-auto mb-10 leading-relaxed animate-fade-up delay-200">
+      Una red neuronal entrenada con <span class="text-[#00ff41]">TensorFlow</span> que aprende la relación
+      entre millas y kilómetros procesando arrays de datos. No usa fórmulas: <span class="text-[#00ffff]">aprende el patrón por sí sola</span>.
+    </p>
+
+    <!-- Terminal preview -->
+    <div class="glass-dark border border-[#00ff41]/20 rounded-none max-w-xl mx-auto mb-10 text-left overflow-hidden animate-fade-up delay-300">
+      <div class="flex items-center gap-2 px-4 py-2 border-b border-[#00ff41]/10 bg-[#00ff41]/5">
+        <span class="w-2.5 h-2.5 rounded-full bg-red-500/70"></span>
+        <span class="w-2.5 h-2.5 rounded-full bg-yellow-500/70"></span>
+        <span class="w-2.5 h-2.5 rounded-full bg-[#00ff41]/70"></span>
+        <span class="ml-2 text-[#00ff41]/40 text-xs">terminal — red_neuronal</span>
+      </div>
+      <div class="p-5 font-mono text-sm space-y-1" id="terminal-output">
+        <p><span class="text-[#00ff41]/40">$</span> <span class="text-[#00ff41]">python predict.py</span></p>
+        <p class="text-white/30">▶ Cargando modelo: <span class="text-[#00ff41]">model.keras</span></p>
+        <p class="text-white/30">▶ Input:  <span class="text-[#00ffff]">[1.0, 5.0, 10.0, 100.0]</span> mi</p>
+        <p class="text-white/30">▶ Output: <span class="text-[#00ff41]">[1.609, 8.047, 16.093, 160.934]</span> km</p>
+        <p class="text-white/30">✓ Loss: <span class="text-[#00ff41]">0.00023</span> | Epochs: <span class="text-[#00ff41]">500</span></p>
+        <p><span class="text-[#00ff41]/40">$</span> <span class="animate-blink text-[#00ff41]">_</span></p>
+      </div>
+    </div>
+
+    <!-- Chip de alumna — agregar antes de los CTAs -->
+    <div class="inline-flex items-center gap-3 glass-dark border border-[#a78bfa]/30 px-5 py-2.5 mb-10 animate-fade-up delay-300">
+    <span class="text-[#a78bfa] text-sm">◈</span>
+    <div class="text-left">
+        <p class="text-[10px] text-white/30 tracking-widest uppercase">Alumna</p>
+        <p class="text-white font-semibold text-sm">Marilu Mendoza Ramírez</p>
+    </div>
+    </div>
+
+    <!-- CTAs -->
+    <div class="flex flex-col sm:flex-row gap-4 justify-center animate-fade-up delay-500">
+      <a href="#predictor"
+        class="px-8 py-3 bg-[#00ff41]/10 border border-[#00ff41]/60 text-[#00ff41] tracking-widest uppercase text-sm hover:bg-[#00ff41]/20 transition-all duration-200 glow-box">
+        ▶ Probar Predictor
+      </a>
+      <a href="#arquitectura"
+        class="px-8 py-3 border border-white/10 text-white/50 tracking-widest uppercase text-sm hover:border-white/30 hover:text-white/80 transition-all duration-200">
+        Ver Arquitectura
+      </a>
+    </div>
+
+  </div>
+
+  <!-- Scroll indicator -->
+  <div class="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-1 text-[#00ff41]/30 text-xs animate-float">
+    <span class="tracking-widest">SCROLL</span>
+    <span>↓</span>
+  </div>
+</section>
