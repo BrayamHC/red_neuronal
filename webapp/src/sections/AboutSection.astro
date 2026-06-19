@@ -1,0 +1,72 @@
+---
+const timeline = [
+  {
+    step: '01',
+    title: 'Preparar datos',
+    desc: 'Creamos dos arrays NumPy: millas conocidas y sus equivalentes en KM. Esos son los datos de entrenamiento.',
+    code: 'miles = np.array([1.0, 5.0, 10.0, 100.0])\nkm    = np.array([1.609, 8.047, 16.09, 160.93])',
+    color: '#00ffff',
+  },
+  {
+    step: '02',
+    title: 'Definir la red',
+    desc: 'Una capa Dense con 1 neurona de entrada y 1 de salida. Mínimo para aprender una relación lineal.',
+    code: 'model = Sequential([Dense(1, input_shape=[1])])\nmodel.compile(optimizer="adam", loss="mse")',
+    color: '#00ff41',
+  },
+  {
+    step: '03',
+    title: 'Entrenar el modelo',
+    desc: 'Con 500 epochs la red ajusta su único peso interno hasta que converge cerca de 1.60934.',
+    code: 'model.fit(miles, km, epochs=500, verbose=0)\nmodel.save("model.keras")',
+    color: '#a78bfa',
+  },
+  {
+    step: '04',
+    title: 'Predicción en web',
+    desc: 'FastAPI carga model.keras y expone /predict. La web hace POST y muestra resultados en tiempo real.',
+    code: '@app.post("/predict")\ndef predict(data: Input):\n  return {"km": model.predict(data.miles).tolist()}',
+    color: '#f59e0b',
+  },
+];
+---
+
+<section id="proyecto" class="relative py-28 px-6">
+  <div class="max-w-4xl mx-auto">
+
+    <div class="mb-16 text-center">
+      <p class="text-[#00ff41]/40 text-xs tracking-[0.3em] uppercase mb-3">// CÓMO FUNCIONA</p>
+      <h2 class="text-3xl md:text-4xl font-bold text-white">
+        Del dato al <span class="text-matrix">Predictor</span>
+      </h2>
+    </div>
+
+    <div class="relative">
+      <!-- Timeline line -->
+      <div class="absolute left-6 md:left-8 top-0 bottom-0 w-px bg-gradient-to-b from-transparent via-[#00ff41]/20 to-transparent hidden md:block"></div>
+
+      <div class="space-y-8">
+        {timeline.map((item) => (
+          <div class="relative flex gap-6 md:gap-10 items-start group">
+            <!-- Step circle -->
+            <div
+              class="flex-shrink-0 w-12 h-12 md:w-16 md:h-16 border-2 flex items-center justify-center font-bold text-sm md:text-base z-10 bg-[#0a0a0a] transition-all duration-300 group-hover:scale-110"
+              style={`border-color: ${item.color}; color: ${item.color}; box-shadow: 0 0 16px ${item.color}30`}
+            >
+              {item.step}
+            </div>
+
+            <!-- Content -->
+            <div class="flex-1 glass-dark border border-[#00ff41]/10 group-hover:border-[#00ff41]/25 transition-all duration-300 p-5 md:p-6">
+              <h3 class="font-bold text-white text-base mb-2" style={`color: ${item.color}`}>
+                {item.title}
+              </h3>
+              <p class="text-white/40 text-sm leading-relaxed mb-4">{item.desc}</p>
+              <pre class="text-xs text-[#00ff41]/70 bg-black/60 border border-[#00ff41]/10 p-3 overflow-x-auto leading-relaxed"><code>{item.code}</code></pre>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  </div>
+</section>
