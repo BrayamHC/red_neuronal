@@ -1,0 +1,49 @@
+---
+import '../styles/global.css';
+
+interface Props {
+  title?: string;
+  description?: string;
+}
+
+const {
+  title = 'Red Neuronal — Miles → KM con TensorFlow',
+  description = 'Proyecto de inteligencia artificial que convierte millas a kilómetros usando una red neuronal entrenada con TensorFlow y Python.',
+} = Astro.props;
+---
+
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content={description} />
+    <title>{title}</title>
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  </head>
+  <body class="relative min-h-screen bg-[#0a0a0a]">
+    <!-- Scan lines overlay -->
+    <div class="scan-line pointer-events-none fixed inset-0 z-50 opacity-30"></div>
+
+    <!-- Canvas background -->
+    <canvas
+      id="matrix-bg"
+      class="fixed inset-0 z-0 opacity-20"
+      aria-hidden="true"
+    ></canvas>
+
+    <!-- Content -->
+    <div class="relative z-10">
+      <slot />
+    </div>
+
+    <script>
+      import { MatrixCanvas } from '../canvas/BackgroundCanvas';
+      const canvas = document.getElementById('matrix-bg') as HTMLCanvasElement;
+      if (canvas) {
+        const matrix = new MatrixCanvas(canvas);
+        matrix.start();
+      }
+    </script>
+  </body>
+</html>
